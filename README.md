@@ -1,37 +1,11 @@
-## Welcome to GitHub Pages
+# 图像处理大合集
 
-You can use the [editor on GitHub](https://github.com/chiwent/imgProcess/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+在这里，你将可以看到一些正常一点的图像处理作品，也可以看到一些比较有趣的实用工具（比如表情包的），下面是一些清单，会逐步更新内容：
+<br>
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+- 表情包在线生成器(目前仅能添加文字内容)：https://chiwent.github.io/imgProcess/js/jichou/
 
-### Markdown
+## 鸣谢
+- 表情包在线生成器的灵感来源，好吧，其实我不少内容是搬运自它的仓库的：https://juejin.im/post/5aff6cd56fb9a07ab1116df9
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/chiwent/imgProcess/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
