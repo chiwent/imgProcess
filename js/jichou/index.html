@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>记仇表情包</title>
+    <style>
+        * {
+            margin: 0 auto;
+            font-family: "PingFang SC";
+        }
+        
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .container {
+            position: relative;
+            margin: 30px auto;
+            width: 250px;
+        }
+        
+        #content-box {
+            position: relative;
+            margin: 50px auto 20px auto;
+            width: 250px;
+            background-color: #fff;
+            border: 1px solid #fff;
+        }
+        
+        .row {
+            position: relative;
+            margin-bottom: 20px;
+            height: 45px;
+        }
+        
+        #btn {
+            border: 0;
+            width: 100px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #000;
+            cursor: pointer;
+            padding: 10px 30px;
+            text-align: center;
+            box-sizing: border-box;
+            float: left;
+        }
+        
+        .upload {
+            border: 0;
+            width: 100px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #000;
+            cursor: pointer;
+            padding: 10px 30px;
+            text-align: center;
+            box-sizing: border-box;
+            float: right;
+            cursor: pointer;
+        }
+        
+        .clearfloat:after {
+            content: "";
+            height: 0;
+            clear: both;
+            visibility: hidden;
+            display: table-cell;
+        }
+        
+        #imageChange {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+            height: 42px;
+            opacity: 0;
+            z-index: 233;
+            cursor: pointer;
+        }
+        
+        #screen-box {
+            /* margin: 20px auto; */
+            position: relative;
+            margin-top: 100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        #screen-box img {
+            position: relative;
+            /* bottom: 0; */
+        }
+        
+        #footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #footer a {
+            color: rgba(0, 0, 0, .8);
+        }
+        
+        #selected {
+            width: 1300px;
+            height: 300px;
+            position: relative;
+            display: block;
+        }
+        
+        .img-selected {
+            width: 80%;
+            height: 70%;
+        }
+        
+        ul {
+            margin: 30px auto;
+            padding: 30px;
+            display: table;
+            /* justify-content: space-around; */
+        }
+        
+        li {
+            list-style: none;
+            display: table-cell;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .img-selected input {
+            color: #fff;
+            opacity: 0.5;
+            background-color: #f20000;
+            position: relative;
+            margin: 20px auto;
+            display: block;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .img-selected input:active {
+            background-color: #00fff0;
+        }
+        
+        .words {
+            text-align: center;
+        }
+        
+        .title {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class="title">表情包生成器</h2>
+    <div id="selected">
+        <ul class="img-selected">
+            <li class="target-img" id="img1"><img src="./img/panda1.jpeg" alt=""><input class='select-input' type="button" value="选我"></li>
+            <li class="target-img" id="img2"><img src="./img/panda2.png" alt=""><input class='select-input' type="button" value="选我"></li>
+            <li class="target-img" id="img3"><img src="./img/panda3.png" alt=""><input class='select-input' type="button" value="选我"></li>
+            <li class="target-img" id="img4"><img src="./img/panda4.png" alt=""><input class='select-input' type="button" value="选我"></li>
+        </ul>
+        <div class="btn-selected">
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="content-box">
+            <!-- <div class="img-box"> -->
+            <img id="image" style="width:100%" crossOrigin="anonymous" src="jichou.png" alt="记仇">
+            <!-- </div> -->
+            <div contenteditable="true" class="write">
+                <p class="words"><span id="date">2018年6月2日</span> <span>天气很热，没有人送我饮料和冰激凌，这个仇我先记下了</span></p>
+            </div>
+        </div>
+        <div class="row clearfloat">
+            <a id="btn">生成</a>
+            <a class="upload">上传</a>
+            <input type="file" id="imageChange">
+        </div>
+
+        <div id="screen-box">
+
+        </div>
+        <div id="footer">
+            <p>最好不要打开控制台操作，否则截图可能会出现bug</p>
+        </div>
+    </div>
+    <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+    <script>
+        var btn = document.getElementById('btn');
+        var contentBox = document.getElementById('content-box');
+        var screenBox = document.getElementById('screen-box');
+        var image = document.getElementById('image');
+        var target = document.getElementsByClassName('select-input');
+        for (var i = 0; i < target.length; i++) {
+            target[i].addEventListener('click', (() => {
+                var _i = i;
+                return function() {
+                    selectIndex = 'img' + (_i + 1);
+                    console.log(selectIndex);
+                    selectImg = document.getElementById(selectIndex);
+                    console.log(selectImg);
+                    selectImg = selectImg.getElementsByTagName('img')[0].src;
+                    image.src = selectImg;
+                    console.log(image);
+                }
+            })(), false);
+        }
+
+        var img = new Image();
+        img.id = 'image';
+        img.crossOrigin = 'Anonymous';
+        img.onload = function() {
+            var c = document.createElement('canvas');
+            var img = document.getElementById('image');
+            img.setAttribute("crossOrigin", 'Anonymous');
+            c.height = img.naturalHeight;
+            c.width = img.naturalWidth;
+            var ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            var base64String = c.toDataURL("image/png");
+            img.setAttribute('src', base64String);
+        };
+        //img.src = 'jichou.png';
+
+        document.addEventListener('click', () => {
+            //console.log(html2canvas(contentBox));
+            html2canvas(contentBox, {
+                useCORS: true,
+                backgroundColor: '#ff0000'
+            }).then(canvas => {
+                var dataUrl = canvas.toDataURL('img/jpeg');
+                var newImg = document.createElement('img');
+                newImg.src = dataUrl;
+                screenBox.innerHTML = '';
+                screenBox.appendChild(newImg);
+            });
+        });
+
+        //自动生成当前日期
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var date = document.getElementById('date');
+        date.innerText = `${year}年${month}月${day}日`;
+        //实现自定义上传图片
+        var image = document.getElementById('image');
+        var imageChange = document.getElementById('imageChange');
+
+        function readUrl(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    image.setAttribute('src', e.target.result)
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        imageChange.onchange = function() {
+            readUrl(this);
+        }
+    </script>
+</body>
+
+</html>
