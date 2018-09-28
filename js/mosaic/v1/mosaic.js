@@ -96,6 +96,7 @@ class Mosaic {
                     let color = 'rgba(' + aveColor.r + ',' + aveColor.g + ',' + aveColor.b + ',' + this.opacity + ')';
                     processingCtx.fillStyle = color;
                     this.createMosaic(x, y, processingCtx);
+
                 }
             }
             this.target.appendChild(canvas);
@@ -116,24 +117,65 @@ class Mosaic {
         }
         return pixels;
     }
+
     createMosaic(x, y, ctx) {
-        if (this.tileShape === 'circle') {
-            let centerX = x + this.tileWidth / 2,
-                centerY = y + this.tileHeight / 2,
-                radius = Math.min(this.tileWidth, this.tileHeight) / 2;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill();
-        } else if (this.tileShape === 'rectangle') {
-            let height = this.tileHeight,
-                width = this.tileWidth;
-            ctx.beginPath();
-            ctx.rect(x, y, width, height);
-            ctx.closePath();
-            ctx.fill();
-        } else {
-            alert('The "tileShape" option is error!')
+        let centerX, centerY;
+        switch (this.tileShape) {
+            case 'circle':
+                centerX = x + this.tileWidth / 2;
+                centerY = y + this.tileHeight / 2;
+                let radius = Math.min(this.tileWidth, this.tileHeight) / 2;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                break;
+            case 'rectangle':
+                let height = this.tileHeight,
+                    width = this.tileWidth;
+                ctx.beginPath();
+                ctx.rect(x, y, width, height);
+                ctx.closePath();
+                ctx.fill();
+                break;
+            case 'hexgrid': //https://stackoverflow.com/questions/30822205/rendering-concentric-hexes-on-canvas and https://codepen.io/anon/pen/RrMzKy?editors=1111
+                let r = Math.min(this.tileWidth, this.tileHeight) / 2;
+                let TO_RADIANS = Math.PI / 180;
+                centerX = x + this.tileWidth / 2;
+                centerY = y + this.tileHeight / 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - r);
+                for (let i = 0; i <= 6; i++) {
+                    ctx.lineTo(centerX + Math.cos((i * 60 + 90) * TO_RADIANS) * r, centerY + Math.sin((i * 60 + 90) * TO_RADIANS) * r);
+                    // or
+                    // ctx.lineTo(centerX + Math.cos(i * 60 * TO_RADIANS) * r, centerY + Math.sin(i * 60 * TO_RADIANS) * r);
+                }
+                ctx.closePath();
+                ctx.fill();
+                break;
+            case 'heart':
+                let size = Math.max(this.tileWidth, this.tileHeight);
+                let rad = Math.PI / 180;
+                let cx1 = x + size * Math.cos((-90 + 15) * rad);
+                let cy1 = y + size * Math.sin((-90 + 15) * rad);
+                let cx2 = x + size * Math.cos((-90 - 15) * rad);
+                let cy2 = y + size * Math.sin((-90 - 15) * rad);
+                let chord = 2 * size * Math.sin(15 * rad / 2);
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.arc(cx2, cy2, chord, (90 - 90) * rad, (90 - 90 + 150) * rad, true);
+                ctx.lineTo(x, y);
+                ctx.moveTo(x, y);
+                ctx.arc(cx1, cy1, chord, (270 - 90) * rad, (270 - 90 + 210) * rad);
+                ctx.lineTo(x, y);
+                ctx.fill()
+                ctx.closePath();
+                ctx.restore()
+                break;
+            default:
+                console.log('The "tileShape" option is error!')
+                break;
         }
     }
 }

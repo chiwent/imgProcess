@@ -50,7 +50,7 @@
         }
 
         function create() {
-            //if (image.src) {
+          if (image.src) {
             let mosaic = new Mosaic({
                 target: output,
                 image: image,
@@ -59,7 +59,7 @@
                 tileShape: 'rectangle',
             });
             mosaic.init();
-            //}
+           }
         }
     </script>
 </body>
