@@ -30,7 +30,7 @@ class Mosaic {
     }
     init() {
 
-        console.log(this.x, this.y)
+        // console.log(this.x, this.y)
         if (!this.image) {
             alert('Missing image');
         }
@@ -99,7 +99,13 @@ class Mosaic {
 
                 }
             }
-            this.target.appendChild(canvas);
+            if (canvas) {
+                let dataURL = canvas.toDataURL('image/jpg');
+                let imgData = new Image();
+                imgData.src = dataURL
+                this.target.appendChild(imgData);
+            }
+            // this.target.appendChild(canvas);
         }
         // different from context.getImageData
     getImageData(x, y, width, originalImgData) {
@@ -120,6 +126,7 @@ class Mosaic {
 
     createMosaic(x, y, ctx) {
         let centerX, centerY;
+
         switch (this.tileShape) {
             case 'circle':
                 centerX = x + this.tileWidth / 2;
@@ -174,7 +181,6 @@ class Mosaic {
                 ctx.restore()
                 break;
             default:
-                console.log('The "tileShape" option is error!')
                 break;
         }
     }

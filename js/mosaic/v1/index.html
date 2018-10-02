@@ -12,13 +12,153 @@
             padding: 0;
         }
         
+        a,
+        button,
+        input,
+        textarea {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+        
+        button,
+        #input-file {
+            color: #fff;
+            background: #0e83cd;
+            outline: none;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+        
+        button:active {
+            background-color: #00d7b4;
+        }
+        
         .container,
         #output {
             text-align: center;
         }
         
         .input-wrap {
-            margin: 20px;
+            margin: 20px auto;
+        }
+        
+        .file {
+            line-height: 50px;
+            position: relative;
+            display: block;
+            width: 300px;
+            height: 50px;
+            background: #D0EEFF;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            padding: 4px 12px;
+            overflow: hidden;
+            color: #1E88C7;
+            text-decoration: none;
+            text-indent: 0;
+            vertical-align: middle;
+            margin: 30px auto;
+        }
+        
+        .create {
+            display: block;
+            margin: 20px auto;
+        }
+        
+        #input {
+            position: absolute;
+            right: 0;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+        
+        .file:hover {
+            background: #AADFFD;
+            border-color: #78C3F3;
+            color: #004974;
+            text-decoration: none;
+        }
+        
+        .controller {
+            margin: 20px auto;
+            display: table;
+            position: relative;
+            border-collapse: separate;
+            border-spacing: 30px 5px;
+        }
+        
+        .shape-input,
+        .pixel-input {
+            display: table-cell;
+            width: auto;
+            white-space: nowrap;
+        }
+        /*
+        .slide {
+            position: relative;
+            width: 300px;
+            height: 6px;
+            margin-left: 30px;
+            background: #e5e9ef;
+            display: inline-block;
+        }
+        
+        .slide .progress {
+            position: absolute;
+            top: 50%;
+            width: 0;
+            height: 6px;
+            margin-top: -3px;
+            border-radius: 4px;
+            background-color: #fb98b6;
+        }
+        
+        .handler {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 14px;
+            height: 14px;
+            margin-top: -7px;
+            cursor: pointer;
+            border-radius: 7px;
+            background: #de698c;
+        }
+        */
+        
+        #shape-input {
+            margin: 100px auto;
+            width: 200px;
+        }
+        
+        #shape-input span {
+            display: block;
+            height: 25px;
+            line-height: 25px;
+            font-size: 13px;
+            padding-left: 5px;
+            border: 1px solid;
+            cursor: pointer;
+        }
+        
+        #shape-input ul {
+            border: 1px solid;
+            border-top: none;
+            height: 125px;
+            display: none;
+        }
+        
+        #shape-input ul li {
+            list-style-type: none;
+            height: 25px;
+            line-height: 25px;
+            padding-left: 5px;
+            cursor: pointer;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -27,8 +167,34 @@
     <div class="container">
         <img alt="" id="img">
         <div class="input-wrap">
-            <input type="file" id="input" accept="image/*">
-            <button onclick="create()">create</button>
+            <!-- <input type="file" id="input-file" > -->
+            <a href="javascript:;" class="file">选择文件
+                <input type="file" name="" id="input" accept="image/*">
+            </a>
+            <button class="create">create</button>
+        </div>
+        <div class="controller">
+            <div class="shape-input">
+                <!-- <input type="text" placeholder="形状"> -->
+                <div id="shape-input"> <span>请选择分类</span>
+                    <ul id="shape-ul">
+                        <li>circle</li>
+                        <li>rectangle</li>
+                        <li>hexgrid</li>
+                        <li>heart</li>
+                    </ul>
+                </div>
+
+                <!-- <button class="shape-btn">提交</button> -->
+            </div>
+            <!-- <div class="slide">
+                <div class="progress"></div>
+                <div class="handler"></div>
+            </div> -->
+            <div class="pixel-input">
+                <input type="text" placeholder="像素块大小">
+                <button class="pixel-btn" onclick="setPixelSize()">提交</button>
+            </div>
         </div>
         <div id="output"></div>
     </div>
@@ -38,9 +204,17 @@
         let image = document.getElementById('img'),
             output = document.getElementById('output'),
             input = document.getElementById('input');
-        image.onload = function() {
-            console.log('onload')
-        }
+
+        let shape = document.getElementById('shape-input'),
+            shapeSpan = shape.getElementsByTagName('span')[0],
+            selectUl = document.getElementById('shape-ul'),
+            selectLi = selectUl.getElementsByTagName('li'),
+            selectIndex = -1;
+        let container = document.getElementsByClassName('container')[0];
+        let tileSize, tileShape;
+        // image.onload = function() {
+        //     console.log('onload')
+        // }
         input.onchange = function() {
             let reader = new FileReader();
             reader.onload = function(e) {
@@ -49,18 +223,97 @@
             reader.readAsDataURL(this.files[0]);
         }
 
-        function create() {
-          if (image.src) {
-            let mosaic = new Mosaic({
-                target: output,
-                image: image,
-                tileWidth: 8,
-                tileHeight: 8,
-                tileShape: 'rectangle',
-            });
-            mosaic.init();
-           }
+        function setPixelSize() {
+            let input = document.querySelector('.pixel-input input')
+            tileSize = parseInt(input.value);
+            if (tileSize === 'NaN') {
+                alert('请输入数字')
+            }
+            console.log('tileSize:', tileSize)
         }
+
+
+        const selectOption = () => {
+            let flag = 0;
+            shapeSpan.onclick = (e) => {
+                // console.log(flag)
+                if (!flag) {
+                    selectUl.style.display = 'block';
+                    flag++;
+                    e = e || e.window.event;
+                    e.stopPropagation();
+                    document.onkeyup = (ev) => {
+                        ev = ev || window.event;
+                        let keyCode = ev.keyCode;
+                        Array.prototype.forEach.call(selectLi, (item) => {
+                            item.style.background = 'none';
+                        })
+                        if (keyCode === 38) {
+                            if (selectIndex <= 0) {
+                                selectIndex = selectLi.length - 1;
+                            } else {
+                                selectIndex--;
+                            }
+                            selectLi[selectIndex].style.background = '#ccc';
+                        }
+                        if (keyCode === 40) {
+                            if (selectIndex < 0 || selectIndex === selectLi.length - 1) {
+                                selectIndex = 0;
+                            } else {
+                                selectIndex++;
+                            }
+                            selectLi[selectIndex].style.background = '#ccc';
+                        }
+
+                        if (keyCode === 13 && selectIndex !== -1) {
+                            flag = 0
+                            tileShape = selectLi[selectIndex].innerHTML;
+                            console.log('You selected:', tileShape)
+                            shapeSpan.innerHTML = selectLi[selectIndex].innerHTML;
+                            selectLi[selectIndex].style.background = 'none';
+                            selectIndex = -1;
+                            selectUl.style.display = 'none';
+
+                        }
+                    }
+                    Array.prototype.forEach.call(selectLi, (item, index) => {
+                        item.addEventListener('click', (e) => {
+                            flag = 0
+                            tileShape = item.innerHTML;
+                            console.log('You selected:', tileShape)
+                            shapeSpan.innerHTML = item.innerHTML;
+                            // item.style.background = 'none';
+                            selectUl.style.display = 'none';
+                        })
+                    })
+                } else {
+                    selectUl.style.display = 'none';
+                    flag = 0
+                }
+            }
+            document.addEventListener('click', (e) => { // 点击空白处消失
+                if (selectUl.style.display === 'block') {
+                    selectUl.style.display = 'none';
+                    flag = 0
+                }
+            })
+        }
+        let create = document.getElementsByClassName('create')[0];
+        create.onclick = (e) => {
+            if (image.src && tileSize && tileShape) {
+                let mosaic = new Mosaic({
+                    target: output,
+                    image: image,
+                    tileWidth: tileSize,
+                    tileHeight: tileSize,
+                    tileShape: tileShape,
+                });
+                mosaic.init();
+            } else {
+                alert('你是不是少选了什么东西')
+            }
+        }
+        selectOption();
     </script>
 </body>
 
